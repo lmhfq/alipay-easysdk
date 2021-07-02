@@ -8,42 +8,42 @@ class AntCertificationUtil
 
     /**
      * 从证书中提取序列号
-     * @param $certPath
+     * @param $cert
+     * @param bool $isPath
      * @return string
      */
-    public function getCertSN($certPath)
+    public function getCertSN($cert, $isPath = true)
     {
-        $cert = file_get_contents($certPath);
-        $ssl = openssl_x509_parse($cert);
+        $certContent = $isPath ? file_get_contents($cert) : $cert;
+        $ssl = openssl_x509_parse($certContent);
         $SN = md5($this->array2string(array_reverse($ssl['issuer'])) . $ssl['serialNumber']);
         return $SN;
     }
 
     /**
      * 从证书中提取公钥
-     * @param $certPath
+     * @param $cert
+     * @param bool $isPath
      * @return mixed
      */
-    public function getPublicKey($certPath)
+    public function getPublicKey($cert, $isPath = true)
     {
-        $cert = file_get_contents($certPath);
-        $pkey = openssl_pkey_get_public($cert);
+        $certContent = $isPath ? file_get_contents($cert) : $cert;
+        $pkey = openssl_pkey_get_public($certContent);
         $keyData = openssl_pkey_get_details($pkey);
-        $public_key = str_replace('-----BEGIN PUBLIC KEY-----', '', $keyData['key']);
-        $public_key = trim(str_replace('-----END PUBLIC KEY-----', '', $public_key));
-        return $public_key;
+        $publicKey = str_replace('-----BEGIN PUBLIC KEY-----', '', $keyData['key']);
+        return trim(str_replace('-----END PUBLIC KEY-----', '', $publicKey));
     }
 
     /**
      * 提取根证书序列号
-     * @param $certPath  string 根证书
+     * @param $cert string 根证书
      * @return string|null
      */
-    public function getRootCertSN($certPath)
+    public function getRootCertSN($cert, $isPath = true)
     {
-        $cert = file_get_contents($certPath);
-        $this->rootCertContent = $cert;
-        $array = explode("-----END CERTIFICATE-----", $cert);
+        $this->rootCertContent = $isPath ? file_get_contents($cert) : $cert;
+        $array = explode("-----END CERTIFICATE-----", $this->rootCertContent);
         $SN = null;
         for ($i = 0; $i < count($array) - 1; $i++) {
             $ssl[$i] = openssl_x509_parse($array[$i] . "-----END CERTIFICATE-----");
