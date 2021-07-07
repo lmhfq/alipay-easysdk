@@ -204,7 +204,6 @@ class Client {
      * @return AlipayOpenApiGenericSDKResponse
      */
     public function sdkExecute($method, $textParams, $bizParams){
-        $_request = new Request();
         $systemParams = [
             "method" => $method,
             "app_id" => $this->_kernel->getConfig("appId"),
@@ -222,10 +221,12 @@ class Client {
             "body" => $this->_kernel->generateOrderString($systemParams, $bizParams, $textParams, $sign)
         ];
         return AlipayOpenApiGenericSDKResponse::fromMap($response);
-        $_lastRequest = $_request;
-        $_response= Tea::send($_request);
     }
 
+    public function getGatewayServerUrl()
+    {
+        return $this->_kernel->getGatewayServerUrl();
+    }
     /**
      * ISV代商户代用，指定appAuthToken
      *

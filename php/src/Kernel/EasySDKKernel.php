@@ -293,7 +293,7 @@ class EasySDKKernel
         //采集并排序所有参数
         $sortedMap = $this->getSortedMap($systemParams, $bizParams, $textParams);
         $sortedMap[AlipayConstants::SIGN_FIELD] = $sign;
-        return http_build_query($sortedMap);
+        return $this->buildQueryString($sortedMap);
     }
 
     public function sortMap($randomMap)
@@ -419,12 +419,12 @@ class EasySDKKernel
 
     private function setNotifyUrl($params)
     {
-        if ($this->config(AlipayConstants::NOTIFY_URL_CONFIG_KEY) != null && $params(AlipayConstants::NOTIFY_URL_CONFIG_KEY) == null) {
-            $params[AlipayConstants::NOTIFY_URL_CONFIG_KEY] = $this->config(AlipayConstants::NOTIFY_URL_CONFIG_KEY);
+        if ($this->getConfig(AlipayConstants::NOTIFY_URL_CONFIG_KEY) != null && $params(AlipayConstants::NOTIFY_URL_CONFIG_KEY) == null) {
+            $params[AlipayConstants::NOTIFY_URL_CONFIG_KEY] = $this->getConfig(AlipayConstants::NOTIFY_URL_CONFIG_KEY);
         }
     }
 
-    private function getGatewayServerUrl()
+    public function getGatewayServerUrl()
     {
         return $this->getConfig(AlipayConstants::PROTOCOL_CONFIG_KEY) . '://' . $this->getConfig(AlipayConstants::HOST_CONFIG_KEY) . '/gateway.do';
     }
